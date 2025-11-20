@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>DinoVerse — เว็บไซต์ไดโนเสาร์ (Single File)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- NEW EARTHY-AMBER THEME --- */
+    :root{
+      --bg-1:#1a1914; /* Was: #0b1020 (Dark Earth Brown) */
+      --bg-2:#2b2a21; /* Was: #111a3a (Dark Olive) */
+      --card:#25241dcc; /* Was: #0f1730cc */
+      --glass:#25241daa; /* Was: #0f1730aa */
+      --brand:#f5c542; /* Was: #8ef9f3 (Amber/Sun Yellow) */
+      --accent:#68b26c; /* Was: #a78bfa (Jungle Green) */
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --muted:#a3a38f; /* Was: #9aa4bf (Muted Tan) */
+      --text:#f2f0e6; /* Was: #e6ecff (Warm Off-white) */
+    }
+    html,body{height:100%;}
+    body{
+      font-family: 'Prompt', sans-serif; /* <-- ADDED FONT */
+      background:
+        /* Updated radial gradients to match new bg */
+        radial-gradient(1200px 600px at 10% -10%, #302e21 0%, transparent 60%),
+        radial-gradient(1000px 600px at 120% 10%, #3a382b 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    .navbar{
+      backdrop-filter: blur(10px);
+      /* Updated navbar gradient and border */
+      background: linear-gradient(90deg, #181712cc, #1f1e17cc) !important;
+      border-bottom: 1px solid #3a382b;
+    }
+    .brand-dot{
+      display:inline-block;width:10px;height:10px;border-radius:50%;
+      /* Updated brand dot to amber gradient */
+      background: radial-gradient(circle at 30% 30%, #fff7b0, #f5c542 50%, #d4a726 70%, #b88a1b 100%);
+      box-shadow: 0 0 10px #d4a726, 0 0 20px #d4a726;
+      margin-right:8px;
+    }
+    .hero{
+      position:relative;overflow:hidden;border-radius:20px;
+      /* Updated hero gradient and border */
+      background:
+        radial-gradient(800px 400px at -10% 50%, #3a382b 0%, transparent 60%),
+        radial-gradient(900px 450px at 110% 30%, #4a4738 0%, transparent 60%),
+        linear-gradient(135deg, #201f1a, #2b2a21);
+      border:1px solid #3a382b;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .glow{
+      /* Updated glow shadow to new brand/accent colors */
+      text-shadow: 0 0 12px rgba(245, 197, 66, 0.6), 0 0 28px rgba(104, 178, 108, 0.35);
+    }
+
+    /* --- BUTTON STYLE UPDATE --- */
+    .btn-neo{
+      /* Updated button colors */
+      border:1px solid #4a4738;
+      background: linear-gradient(180deg, #3a382b, #201f1a);
+      color:var(--text);
+      box-shadow: 0 6px 20px rgba(26,25,20,.35), inset 0 0 0 1px rgba(255,255,255,.05);
+      transition: all .2s ease-out; /* Added transition */
+    }
+    .btn-neo:hover{
+      border-color:var(--brand); /* Use brand color */
+      color:#fff;
+      transform:translateY(-2px); /* Lift */
+      /* Updated hover shadows */
+      box-shadow: 0 8px 25px rgba(26,25,20,.5), /* Dark shadow */
+                  0 0 20px rgba(245, 197, 66, 0.4); /* Brand glow */
+    }
+    
+    /* Override Bootstrap's .btn-outline-light */
+    .btn-outline-light {
+      color: var(--accent); /* Use accent color text */
+      border-color: var(--accent); /* Use accent color border */
+      transition: all .2s ease-out;
+    }
+    .btn-outline-light:hover {
+      color: #fff; /* White text on hover */
+      /* Updated accent hover colors */
+      background: rgba(104, 178, 108, 0.15); /* Glassy accent fill */
+      border-color: var(--accent);
+      transform: translateY(-2px); /* Lift */
+      box-shadow: 0 0 20px rgba(104, 178, 108, 0.4); /* Accent glow */
+    }
+    /* --- END BUTTON STYLE UPDATE --- */
+
+    .card-glass{
+      background: linear-gradient(180deg, var(--glass), #201f1aa6);
+      /* Updated card border */
+      border:1px solid #3a382b;
+      border-radius:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+    .chip{
+      font-size:.8rem;
+      /* Updated chip colors */
+      border:1px solid #575444;
+      padding:.25rem .5rem;
+      border-radius:999px;
+      color:var(--text);
+      background:#201f1acc;
+    }
+    .section-title{
+      font-weight:700;letter-spacing:.3px;
+      /* Updated section title gradient to light amber/green */
+      background: linear-gradient(90deg, #fcecb0, #b5e3b8 60%, #fcecb0);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .dino-card{
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      cursor:pointer;
+    }
+    .dino-card:hover{
+      transform: translateY(-4px);
+      /* Updated hover to use brand color */
+      border-color:var(--brand);
+      box-shadow: 0 14px 40px rgba(43,42,33,.45);
+    }
+    .soft-divider{
+      height:1px;
+      /* Updated divider color */
+      background: linear-gradient(90deg, transparent, #4a4738, transparent);
+    }
+    .icon-badge{
+      display:inline-flex;align-items:center;gap:.35rem;
+      padding:.25rem .55rem;border-radius:10px;
+      /* Updated icon badge colors */
+      border:1px solid #4a4738;
+      background:#201f1a;
+      font-size:.85rem;
+      color:var(--text);
+    }
+    .kpi{
+      /* Updated kpi colors */
+      border:1px dashed #4a4738;
+      border-radius:14px;padding:.75rem 1rem;
+      background:#201f1aa0;
+    }
+
+    /* --- CSS FIX FOR DARK TEXT (e-g-, Alerts) --- */
+    .text-muted {
+      color: var(--muted) !important; /* <-- FINAL FIX: ADDED !important */
+    }
+    .alert{
+      background: var(--glass);
+      color: var(--text);
+      /* Updated alert border */
+      border-color: #4a4738;
+    }
+    .alert-warning{
+      border-color: var(--warn);
+    }
+    /* --- END FIX --- */
+
+    /* --- VIDEO CONTAINER (NEW) --- */
+    .video-responsive-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      border-radius: 14px;
+      /* Updated video border/bg */
+      border: 1px solid #3a382b;
+      background: var(--bg-1); /* Dark background */
+    }
+    .video-responsive-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    /* --- END VIDEO CONTAINER --- */
+    
+    /* Dino inline SVG helpers */
+    .dino-figure{
+      width:100%;height:160px;border-radius:14px;
+      /* Updated figure gradient and border */
+      background: radial-gradient(120px 80px at 20% 30%, #4a4738 0%, transparent 70%),
+                  linear-gradient(135deg, #201f1a, #3a382b);
+      border:1px solid #3a382b;
+      overflow:hidden;position:relative;
+    }
+    .dino-figure svg{position:absolute;inset:0;}
+    /* Router visibility */
+    [data-view]{display:none;}
+    [data-view].active{display:block;}
+    /* Footer */
+    footer{color:var(--muted);} /* Use var */
+    /* Small tweaks */
+    .nav-link{color:var(--text) !important; opacity:.9;} /* Use var */
+    .nav-link.active, .nav-link:hover{opacity:1;}
+    .brand{font-weight:700;letter-spacing:.6px;}
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand brand" href="#/">
+        <span class="brand-dot"></span>DinoVerse
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nv">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nv">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#/">หน้าหลัก</a></li>
+          <li class="nav-item"><a class="nav-link" href="#/species">สายพันธุ์</a></li>
+          <li class="nav-item"><a class="nav-link" href="#/timeline">ไทม์ไลน์</a></li>
+          <li class="nav-item"><a class="nav-link" href="#/gallery">แกลเลอรี</a></li>
+          <li class="nav-item"><a class="nav-link" href="#/members">สมาชิก</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top:90px;padding-bottom:60px;">
+    <section id="view-home" data-view class="active">
+      <div class="hero p-4 p-md-5 mb-4">
+        <div class="row align-items-center">
+          <div class="col-lg-7">
+            <h1 class="display-5 glow">สำรวจโลกไดโนเสาร์</h1>
+            <p class="lead text-opacity-75">
+              เรียนรู้สายพันธุ์เด่น ยุคสมัย อาหาร ลักษณะ และเกร็ดความรู้ พร้อมดีไซน์ทันสมัยแบบกลาสสไตล์และเนออนซอฟต์
+            </p>
+            <div class="d-flex gap-2 mt-3">
+              <a href="#/species" class="btn btn-neo btn-lg">ดูสายพันธุ์</a>
+              <a href="#/timeline" class="btn btn-outline-light btn-lg">ไทม์ไลน์ทางธรณีกาล</a>
+            </div>
+            <div class="row g-3 mt-4">
+              <div class="col-6 col-md-4">
+                <div class="kpi text-center">
+                  <div class="h3 mb-0">10</div> <div class="text-muted">สายพันธุ์ตัวอย่าง</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="kpi text-center">
+                  <div class="h3 mb-0">3</div>
+                  <div class="text-muted">ยุคเมโสโซอิก</div>
+                </div>
+              </div>
+              </div>
+          </div>
+          <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="video-responsive-container">
+              <iframe 
+                src="https://www.youtube.com/embed/nK2WNlhKRZk?autoplay=1&mute=1&loop=1&playlist=nK2WNlhKRZk&controls=0&showinfo=0&modestbranding=1" 
+                title="5.1 Surround I Dinosaur World 4K HDR I Dolby Atmos Support" 
+                frameborder="0" 
+                allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+          </div>
+          </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card-glass p-4 h-100">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="icon-badge"><span>🌍</span><span>เมโสโซอิก</span></span>
+              <span class="icon-badge"><span>🧭</span><span>ไทรแอสซิก–จูราสซิก–ครีเทเชียส</span></span>
+            </div>
+            <h3 class="section-title mb-2">ภาพรวม</h3>
+            <p class="mb-0 text-opacity-75">
+              ไดโนเสาร์คือกลุ่มสัตว์เลื้อยคลานที่ครองแผ่นดินในยุคเมโสโซอิกนานราวหลายสิบถึงร้อยกว่าล้านปี โดยมีความหลากหลายสูงและมีสายวิวัฒนาการเชื่อมโยงกับนกในปัจจุบันตามหลักฐานหลายประการ
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card-glass p-4 h-100">
+            <h3 class="section-title mb-2">เริ่มต้นอย่างรวดเร็ว</h3>
+            <p class="mb-2 text-opacity-75">คลิกเมนูด้านบนเพื่อไปยังรายการสายพันธุ์ ไทม์ไลน์ทางธรณีกาล หรือแกลเลอรีได้ทันที</p>
+            <div class="soft-divider my-3"></div>
+            <div class="d-flex gap-2">
+              <a href="#/species" class="btn btn-neo">ไปที่สายพันธุ์</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-species" data-view>
+      <h2 class="section-title mb-3">สายพันธุ์เด่น</h2>
+      <p class="text-muted mb-4">
+        คลิกที่แถบด้านล่างเพื่อเปิด/ปิดดูรายการไดโนเสาร์ตามประเภทการกิน
+      </p>
+
+      <div class="mb-3">
+        <button class="btn btn-neo btn-lg w-100 d-flex justify-content-between align-items-center" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapse-carnivores" 
+                aria-expanded="true" 
+                aria-controls="collapse-carnivores">
+          <span>
+            <span class="icon-badge me-2" style="border-color: var(--danger); background: #ef444422;">🥩</span>
+            <span>นักล่า (กินเนื้อ)</span>
+          </span>
+          <span id="carnivore-count" class="badge bg-danger rounded-pill"></span>
+        </button>
+        
+        <div class="collapse show" id="collapse-carnivores">
+          <div class="card-glass p-3 mt-2" style="background: #201f1aa6;">
+            <div id="carnivore-grid" class="row g-4 p-2">
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button class="btn btn-neo btn-lg w-100 d-flex justify-content-between align-items-center" 
+                type="button" 
+                data-bs-toggle="collapse" 
+                data-bs-target="#collapse-herbivores" 
+                aria-expanded="true" 
+                aria-controls="collapse-herbivores">
+          <span>
+            <span class="icon-badge me-2" style="border-color: var(--ok); background: #22c55e22;">🌿</span>
+            <span>ไดโนเสาร์ (กินพืช)</span>
+          </span>
+          <span id="herbivore-count" class="badge bg-success rounded-pill"></span>
+        </button>
+        
+        <div class="collapse show" id="collapse-herbivores">
+          <div class="card-glass p-3 mt-2" style="background: #201f1aa6;">
+            <div id="herbivore-grid" class="row g-4 p-2">
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="view-detail" data-view>
+      <div class="mb-3">
+        <a href="#/species" class="btn btn-outline-light btn-sm">← กลับไปหน้าสายพันธุ์</a>
+      </div>
+      <div id="detail-wrap" class="row g-4"></div>
+    </section>
+
+    <section id="view-timeline" data-view>
+      <h2 class="section-title mb-3">ไทม์ไลน์เมโสโซอิก</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card-glass p-4 h-100">
+            <div class="dino-figure mb-3">
+              <svg viewBox="0 0 600 300"><rect x="0" y="240" width="600" height="60" fill="#1a1914"/><g fill="#7ef0ea" opacity=".5"><circle cx="120" cy="160" r="50"/><rect x="160" y="150" width="140" height="40" rx="10"/><rect x="180" y="190" width="20" height="30" rx="6"/><rect x="210" y="190" width="20" height="30" rx="6"/></g></svg>
+            </div>
+            <h4>ไทรแอสซิก (Triassic)</h4>
+            <p class="text-opacity-75">จุดเริ่มต้นของไดโนเสาร์ยุคแรก ช่วงฟื้นตัวของระบบนิเวศหลังการสูญพันธุ์ครั้งใหญ่ก่อนหน้า</p>
+            <span class="chip">≈ 252–201 ล้านปีก่อน</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-glass p-4 h-100">
+            <div class="dino-figure mb-3">
+              <svg viewBox="0 0 600 300"><rect x="0" y="240" width="600" height="60" fill="#1a1914"/><g fill="#a78bfa" opacity=".55"><ellipse cx="260" cy="170" rx="110" ry="50"/><rect x="210" y="190" width="20" height="30" rx="6"/><rect x="240" y="190" width="20" height="30" rx="6"/><polygon points="340,180 370,160 380,170 360,190" /></g></svg>
+            </div>
+            <h4>จูราสซิก (Jurassic)</h4>
+            <p class="text-opacity-75">ยุคของซอโรพอดคอยาวและการกระจายตัวของกลุ่มสำคัญหลายชนิดในแหล่งอาศัยที่หลากหลาย</p>
+            <span class="chip">≈ 201–145 ล้านปีก่อน</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-glass p-4 h-100">
+            <div class="dino-figure mb-3">
+              <svg viewBox="0 0 600 300"><rect x="0" y="240" width="600" height="60" fill="#1a1914"/><g fill="#64f0e7" opacity=".6"><ellipse cx="260" cy="180" rx="130" ry="55"/><circle cx="380" cy="150" r="28"/><polygon points="395,160 405,150 405,167" fill="#bffcff"/></g></svg>
+            </div>
+            <h4>ครีเทเชียส (Cretaceous)</h4>
+            <p class="text-opacity-75">ความหลากหลายสูงสุดของหลายสกุล และสิ้นสุดด้วยเหตุการณ์สูญพันธุ์ครั้งใหญ่ปลายยุค</p>
+            <span class="chip">≈ 145–66 ล้านปีก่อน</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-gallery" data-view>
+      <h2 class="section-title mb-3">แกลเลอรีกราฟิก</h2>
+      <p class="text-opacity-75 mb-4">โปสเตอร์ SVG ภายในไฟล์ เพื่อให้ทำงานได้แม้ออฟไลน์</p>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card-glass p-3 dino-card">
+            <div class="dino-figure mb-2">
+              <svg viewBox="0 0 600 300"><defs><linearGradient id="g1" x1="0" x2="1"><stop offset="0" stop-color="#7ef0ea"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><rect x="0" y="0" width="600" height="300" fill="url(#g1)" opacity=".08"/><g fill="#7ef0ea" opacity=".6"><ellipse cx="260" cy="180" rx="130" ry="55"/><circle cx="380" cy="150" r="28"/><polygon points="395,160 405,150 405,167" fill="#bffcff"/></g></svg>
+            </div>
+            <div class="d-flex justify-content-between"><span class="chip">T. rex</span><span class="chip">Carnivore</span></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-glass p-3 dino-card">
+            <div class="dino-figure mb-2">
+              <svg viewBox="0 0 600 300"><g fill="#a78bfa" opacity=".6"><ellipse cx="260" cy="180" rx="120" ry="52"/><rect x="180" y="160" width="30" height="20" rx="5"/><rect x="210" y="160" width="30" height="20" rx="5"/><polygon points="150,140 180,130 170,160" /></g></svg>
+            </div>
+            <div class="d-flex justify-content-between"><span class="chip">Triceratops</span><span class="chip">Herbivore</span></div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-glass p-3 dino-card">
+            <div class="dino-figure mb-2">
+              <svg viewBox="0 0 600 300"><g fill="#64f0e7" opacity=".6"><ellipse cx="260" cy="180" rx="100" ry="46"/><polygon points="210,120 230,100 250,120 270,100 290,120" /></g></svg>
+            </div>
+            <div class="d-flex justify-content-between"><span class="chip">Stegosaurus</span><span class="chip">Herbivore</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-members" data-view>
+      <h2 class="section-title mb-3">สมาชิกทีม</h2>
+      <div id="members-grid" class="row g-4"></div>
+    </section>
+
+    <section id="view-member-detail" data-view>
+      <div class="mb-3">
+        <a href="#/members" class="btn btn-outline-light btn-sm">← กลับไปหน้าสมาชิก</a>
+      </div>
+      <div id="member-detail-wrap" class="row g-4"></div>
+    </section>
+
+  </main>
+
+  <footer class="container pb-5">
+    <div class="soft-divider mb-3"></div>
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 text-muted">
+      <div>© 2025 DinoVerse</div>
+      <div>SPU</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+          crossorigin="anonymous"></script>
+
+  <script>
+    // -------- Data --------
+    const SPECIES = [
+      {
+        id:"trex",
+        name:"Tyrannosaurus rex",
+        thai:"ไทแรนโนซอรัส เร็กซ์",
+        sci:"Tyrannosaurus rex",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินเนื้อ",
+        length:"ประมาณ 12–13 ม.",
+        weight:"ประมาณ 8–10 ตัน",
+        summary:"นักล่าขนาดใหญ่ กะโหลกทรงพลัง ฟันหนาเหมือนกล้วยหอม แขนสั้นแต่ขาหลังแข็งแรง",
+        features:["กะโหลกแข็งแรง","ขากรรไกรทรงพลัง","แขนสั้นนิ้วมีกรงเล็บ 2 เล่ม"],
+        color:"#7ef0ea",
+      },
+      {
+        id:"triceratops",
+        name:"Triceratops",
+        thai:"ไทรเซอราทอปส์",
+        sci:"Triceratops horridus",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินพืช",
+        length:"ประมาณ 8–9 ม.",
+        weight:"ประมาณ 6–12 ตัน",
+        summary:"โดดเด่นด้วยเขา 3 อันและแผงคอใหญ่ ใช้ป้องกันตัวและแสดงพฤติกรรมทางสังคม",
+        features:["เขาเหนือดวงตา 2 อัน","เขาจมูก 1 อัน","แผงคอใหญ่"],
+        color:"#a78bfa",
+      },
+      {
+        id:"velociraptor",
+        name:"Velociraptor",
+        thai:"เวลอซิแรปเตอร์",
+        sci:"Velociraptor mongoliensis",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินเนื้อ",
+        length:"ประมาณ 2 ม.",
+        weight:"ราว 15 กก.",
+        summary:"ขนาดเล็กปราดเปรียว มีกงเล็บโค้งที่นิ้วเท้าสำหรับเกี่ยวเหยื่อ เชื่อว่ามีขนปกคลุมบางส่วน",
+        features:["กงเล็บรูปเคียว","ว่องไว","อาจมีขน"],
+        color:"#64f0e7",
+      },
+      {
+        id:"brachiosaurus",
+        name:"Brachiosaurus",
+        thai:"บรากิโอซอรัส",
+        sci:"Brachiosaurus altithorax",
+        period:"จูราสซิกตอนปลาย",
+        diet:"กินพืช",
+        length:"ประมาณ 25 ม.",
+        weight:"หลายสิบตัน",
+        summary:"คอยาว ไหล่สูงกว่าสะโพก หัวสูงสำหรับกินใบไม้จากเรือนยอด",
+        features:["คอยาวมาก","ไหล่สูง","กินยอดไม้"],
+        color:"#9be0ff",
+      },
+      {
+        id:"stegosaurus",
+        name:"Stegosaurus",
+        thai:"สเตโกซอรัส",
+        sci:"Stegosaurus stenops",
+        period:"จูราสซิกตอนปลาย",
+        diet:"กินพืช",
+        length:"ประมาณ 9 ม.",
+        weight:"หลายตัน",
+        summary:"มีแผ่นกระดูกเป็นแถวบนหลังและหางมีกระบองหนามสำหรับป้องกันตัว",
+        features:["แผ่นหลังเป็นแถว","หางมีหนาม","กินพืช"],
+        color:"#c8b8ff",
+      },
+      {
+        id:"spinosaurus",
+        name:"Spinosaurus",
+        thai:"สไปโนซอรัส",
+        sci:"Spinosaurus aegyptiacus",
+        period:"ครีเทเชียส",
+        diet:"กินเนื้อ (กึ่งน้ำ)",
+        length:"ยาวมาก (กว่า 14 ม. ในการประมาณ)",
+        weight:"หลายตัน",
+        summary:"มีครีบหลังเหมือนใบเรือและมีพฤติกรรมกึ่งน้ำ คาดว่าล่าเหยื่อในสภาพแวดล้อมริมน้ำ",
+        features:["ครีบหลังใหญ่","กรามยาว","พฤติกรรมกึ่งน้ำ"],
+        color:"#8ef9f3",
+      },
+      // --- ไดโนเสาร์ 4 ตัวที่เพิ่มใหม่ ---
+      {
+        id:"allosaurus",
+        name:"Allosaurus",
+        thai:"อัลโลซอรัส",
+        sci:"Allosaurus fragilis",
+        period:"จูราสซิกตอนปลาย",
+        diet:"กินเนื้อ",
+        length:"ประมาณ 8.5–9.7 ม.",
+        weight:"ประมาณ 2–3 ตัน",
+        summary:"นักล่ายุคจูราสซิกที่มีชื่อเสียง มีกรงเล็บขนาดใหญ่และฟันที่แหลมคม",
+        features:["กรงเล็บขนาดใหญ่","นักล่าที่ว่องไว","มีสันกระดูกเหนือตา"],
+        color:"#f5b041",
+      },
+      {
+        id:"carnotaurus",
+        name:"Carnotaurus",
+        thai:"คาร์โนทอรัส",
+        sci:"Carnotaurus sastrei",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินเนื้อ",
+        length:"ประมาณ 7.5–9 ม.",
+        weight:"ประมาณ 1.5–2 ตัน",
+        summary:"นักล่าที่มีแขนสั้นมาก และมีเขาแหลมสองข้างเหนือดวงตา",
+        features:["มีเขาสองข้าง","แขนสั้นมาก (สั้นกว่า T. rex)","นักวิ่งที่รวดเร็ว"],
+        color:"#e74c3c",
+      },
+      {
+        id:"ankylosaurus",
+        name:"Ankylosaurus",
+        thai:"แองคิโลซอรัส",
+        sci:"Ankylosaurus magniventris",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินพืช",
+        length:"ประมาณ 6–8 ม.",
+        weight:"ประมาณ 4.8–8 ตัน",
+        summary:"ไดโนเสาร์หุ้มเกราะหนัก มีลูกตุ้มขนาดใหญ่ที่ปลายหางสำหรับป้องกันตัว",
+        features:["เกราะกระดูกหนา","ลูกตุ้มที่หาง","ลำตัวกว้างและเตี้ย"],
+        color:"#1abc9c",
+      },
+      {
+        id:"parasaurolophus",
+        name:"Parasaurolophus",
+        thai:"พาราซอโรโลฟัส",
+        sci:"Parasaurolophus walkeri",
+        period:"ครีเทเชียสตอนปลาย",
+        diet:"กินพืช",
+        length:"ประมาณ 9.5 ม.",
+        weight:"ประมาณ 2.5 ตัน",
+        summary:"ไดโนเสาร์ปากเป็ดที่มีหงอนกลวงยาวบนหัว คาดว่าใช้ส่งเสียง",
+        features:["หงอนกลวงบนหัว","ปากคล้ายเป็ด","เดินได้ 2 และ 4 ขา"],
+        color:"#9b59b6",
+      }
+      // --- สิ้นสุดส่วนที่เพิ่ม ---
+    ];
+
+    // NEW MEMBER DATA
+    const MEMBERS = [
+      {
+        id: "m1",
+        name: "สมาชิก 1",
+        role: "Project Lead",
+        bio: "รับผิดชอบการวางแผนโปรเจกต์และดูแลภาพรวมทั้งหมด",
+        color: "#8ef9f3" // Using theme colors
+      },
+      {
+        id: "m2",
+        name: "สมาชิก 2",
+        role: "UX/UI Designer",
+        bio: "ผู้ออกแบบดีไซน์ 'Neon-Glass' และประสบการณ์การใช้งาน (UX/UI)",
+        color: "#a78bfa"
+      },
+      {
+        id: "m3",
+        name: "สมาชิก 3",
+        role: "Frontend Developer",
+        bio: "ผู้พัฒนาและเขียนโค้ด JavaScript ทั้งหมดสำหรับระบบ SPA นี้",
+        color: "#64f0e7"
+      },
+      {
+        id: "m4",
+        name: "สมาชิก 4",
+        role: "Content Researcher",
+        bio: "ผู้ค้นคว้าและรวบรวมข้อมูลไดโนเสาร์ทั้งหมดที่อยู่ในเว็บไซต์",
+        color: "#c8b8ff"
+      },
+      {
+        id: "m5",
+        name: "สมาชิก 5",
+        role: "SVG Illustrator",
+        bio: "ผู้วาดภาพประกอบไดโนเสาร์ในรูปแบบ SVG ทั้งหมด",
+        color: "#9be0ff"
+      }
+    ];
+
+    // -------- Helpers --------
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+
+    function chip(text){ return `<span class="chip">${text}</span>`; }
+
+    function svgThumb(color, kind){
+      // return small inline SVG variation by kind
+      if(kind==="trike"){
+        return `
+        <div class="dino-figure mb-3">
+          <svg viewBox="0 0 600 300">
+            <rect x="0" y="240" width="600" height="60" fill="#1a1914"/>
+            <g fill="${color}" opacity=".55">
+              <ellipse cx="260" cy="180" rx="120" ry="52"/>
+              <rect x="180" y="160" width="30" height="20" rx="5"/>
+              <rect x="210" y="160" width="30" height="20" rx="5"/>
+              <polygon points="150,140 180,130 170,160"/>
+            </g>
+          </svg>
+        </div>`;
+      }
+      if(kind==="stego"){
+        return `
+        <div class="dino-figure mb-3">
+          <svg viewBox="0 0 600 300">
+            <rect x="0" y="240" width="600" height="60" fill="#1a1914"/>
+            <g fill="${color}" opacity=".6">
+              <ellipse cx="260" cy="180" rx="100" ry="46"/>
+              <polygon points="210,120 230,100 250,120 270,100 290,120"/>
+            </g>
+          </svg>
+        </div>`;
+      }
+      if(kind==="brachio"){
+        return `
+        <div class="dino-figure mb-3">
+          <svg viewBox="0 0 600 300">
+            <rect x="0" y="240" width="600" height="60" fill="#1a1914"/>
+            <g fill="${color}" opacity=".5">
+              <ellipse cx="250" cy="180" rx="120" ry="50"/>
+              <rect x="320" y="120" width="20" height="80" rx="10"/>
+              <circle cx="330" cy="110" r="18"/>
+            </g>
+          </svg>
+        </div>`;
+      }
+      if(kind==="spino"){
+        return `
+        <div class="dino-figure mb-3">
+          <svg viewBox="0 0 600 300">
+            <rect x="0" y="240" width="600" height="60" fill="#1a1914"/>
+            <g fill="${color}" opacity=".6">
+              <ellipse cx="260" cy="180" rx="130" ry="50"/>
+              <polygon points="180,150 200,100 220,90 240,120 260,140 280,150 300,155 320,160 340,165" />
+            </g>
+          </svg>
+        </div>`;
+      }
+      // default trex/raptor-like
+      return `
+      <div class="dino-figure mb-3">
+        <svg viewBox="0 0 600 300">
+          <rect x="0" y="240" width="600" height="60" fill="#1a1914"/>
+          <g fill="${color}" opacity=".55">
+            <ellipse cx="260" cy="180" rx="130" ry="55"/>
+            <circle cx="380" cy="150" r="28"/>
+            <rect x="240" y="190" width="20" height="30" rx="6"/>
+            <rect x="270" y="190" width="20" height="30" rx="6"/>
+            <polygon points="395,160 405,150 405,167" fill="#bffcff"/>
+          </g>
+        </svg>
+      </div>`;
+    }
+
+    function speciesKind(id){
+      if(id==="triceratops") return "trike";
+      if(id==="stegosaurus") return "stego";
+      if(id==="brachiosaurus") return "brachio";
+      if(id==="spinosaurus") return "spino";
+      // --- เพิ่มการตรวจสอบสำหรับไดโนเสาร์ใหม่ (เพื่อให้รูป SVG สวยขึ้น) ---
+      if(id==="ankylosaurus") return "stego"; // ใช้รูปทรงคล้ายกัน
+      if(id==="parasaurolophus") return "brachio"; // ใช้รูปทรงคล้ายกัน
+      // --- สิ้นสุดการเพิ่ม ---
+      return "trex";
+    }
+
+    // -------- Renderers --------
+    
+    // 1. (เพิ่มใหม่) ฟังก์ชันลูกสำหรับสร้าง HTML ของการ์ด 1 ใบ
+    // เราแยกออกมาเพื่อจะได้เรียกซ้ำได้ง่าย
+    function createDinoCardHTML(sp) {
+      const kind = speciesKind(sp.id);
+      // ใช้ col-sm-6 col-lg-4 เพื่อให้ปรับขนาดได้สวยงามใน grid
+      return `
+        <div class="col-sm-6 col-lg-4">
+          <div class="card-glass p-3 dino-card h-100" onclick="go('#/species/${sp.id}')">
+            ${svgThumb(sp.color, kind)}
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <h5 class="mb-0">${sp.name}</h5>
+              <span class="text-muted">${sp.thai}</span>
+            </div>
+            <div class="soft-divider my-2"></div>
+            <div class="d-flex flex-wrap gap-2">
+              ${chip(sp.period)} ${chip(sp.diet)}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. (แทนที่ของเดิม) ฟังก์ชัน renderSpeciesList ที่อัปเดตแล้ว
+    function renderSpeciesList(){
+      // หาตำแหน่ง grid ใหม่ที่เราสร้างใน HTML
+      const carnivoreGrid = $("#carnivore-grid");
+      const herbivoreGrid = $("#herbivore-grid");
+      
+      // หาตำแหน่งตัวเลขสำหรับนับจำนวน
+      const carnivoreCountEl = $("#carnivore-count");
+      const herbivoreCountEl = $("#herbivore-count");
+
+      // กรองข้อมูลไดโนเสาร์ตามประเภท
+      // (ใช้ .includes() เพื่อรองรับ "กินเนื้อ (กึ่งน้ำ)" ของ Spinosaurus ด้วย)
+      const carnivores = SPECIES.filter(sp => sp.diet.includes("กินเนื้อ"));
+      const herbivores = SPECIES.filter(sp => sp.diet.includes("กินพืช"));
+
+      // 1. แสดงผลไดโนเสาร์กินเนื้อ
+      if (carnivoreGrid) {
+        // วนลูปสร้างการ์ดจากฟังก์ชันลูก
+        carnivoreGrid.innerHTML = carnivores.map(createDinoCardHTML).join("");
+      }
+      if (carnivoreCountEl) {
+        // อัปเดตตัวเลขที่ปุ่ม
+        carnivoreCountEl.textContent = carnivores.length + " ตัว";
+      }
+
+      // 2. แสดงผลไดโนเสาร์กินพืช
+      if (herbivoreGrid) {
+        herbivoreGrid.innerHTML = herbivores.map(createDinoCardHTML).join("");
+      }
+      if (herbivoreCountEl) {
+        herbivoreCountEl.textContent = herbivores.length + " ตัว";
+      }
+    }
+
+    function renderSpeciesDetail(id){
+      const sp = SPECIES.find(s => s.id === id);
+      const wrap = $("#detail-wrap");
+      if(!sp){
+        wrap.innerHTML = `<div class="col-12"><div class="alert alert-warning">ไม่พบสายพันธุ์ที่ร้องขอ</div></div>`;
+        return;
+      }
+      const kind = speciesKind(sp.id);
+      wrap.innerHTML = `
+        <div class="col-lg-6">
+          <div class="card-glass p-3 h-100">
+            ${svgThumb(sp.color, kind)}
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              ${chip(sp.period)} ${chip(sp.diet)} ${chip(sp.length)} ${chip(sp.weight)}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card-glass p-4 h-100">
+            <h3 class="mb-1">${sp.name} <span class="text-muted fs-5">(${sp.thai})</span></h3>
+            <div class="mb-2 text-muted"><em>${sp.sci}</em></div>
+            <p class="text-opacity-75">${sp.summary}</p>
+            <div class="soft-divider my-3"></div>
+            <h6 class="mb-2">ลักษณะเด่น</h6>
+            <ul class="mb-0">
+              ${sp.features.map(f => `<li class="mb-1">${f}</li>`).join("")}
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- NEW MEMBER RRENDERERS ---
+    function renderMemberList() {
+      const grid = $("#members-grid");
+      if (!grid) return;
+      grid.innerHTML = MEMBERS.map(m => {
+        return `
+          <div class="col-lg-4 col-md-6">
+            <div class="card-glass p-4 h-100 text-center dino-card" onclick="go('#/members/${m.id}')" style="cursor:pointer;">
+              <h4 class="mb-1" style="color: ${m.color};">${m.name}</h4>
+              <p class="text-muted mb-0">${m.role}</p>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMemberDetail(id) {
+      const member = MEMBERS.find(m => m.id === id);
+      const wrap = $("#member-detail-wrap");
+      if (!wrap) return;
+
+      if (!member) {
+        wrap.innerHTML = `<div class="col-12"><div class="alert alert-warning">ไม่พบสมาชิกที่ร้องขอ</div></div>`;
+        return;
+      }
+
+      wrap.innerHTML = `
+        <div class="col-lg-4">
+          <div class="card-glass p-4 h-100 text-center">
+            <svg viewBox="0 0 100 100" class="mb-3" style="width: 100px; height: 100px; fill: ${member.color}; opacity: 0.7; margin-left: auto; margin-right: auto;">
+              <circle cx="50" cy="50" r="50" fill-opacity="0.3"/>
+              <circle cx="50" cy="40" r="20" />
+              <ellipse cx="50" cy="85" rx="35" ry="25" />
+            </svg>
+            <h3 class="mb-1" style="color: ${member.color};">${member.name}</h3>
+            <p class="text-muted fs-5 mb-0">${member.role}</p>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card-glass p-4 h-100">
+            <h4 class="section-title mb-3">รายละเอียดหน้าที่</h4>
+            <p class="text-opacity-75 fs-5">${member.bio}</p>
+          </div>
+        </div>
+      `;
+    }
+    // --- END NEW RENDERERS ---
+
+    // -------- Router --------
+    function setActive(viewId){
+      $$("#main [data-view]").forEach(()=>{});
+    }
+    function showView(id){
+      $$("#main [data-view]").forEach(()=>{});
+    }
+    function activate(id){
+      document.querySelectorAll("[data-view]").forEach(v => v.classList.remove("active"));
+      const el = document.getElementById(id);
+      if(el) el.classList.add("active");
+      // set active nav-link
+      document.querySelectorAll(".nav-link").forEach(a => {
+        try{
+          const h = a.getAttribute("href") || "";
+          a.classList.toggle("active", h === location.hash || (h==="#/" && location.hash==="#/"));
+        }catch{}
+      });
+    }
+
+    function go(hash){ location.hash = hash; }
+
+    function router(){
+      const hash = location.hash || "#/";
+      const seg = hash.replace(/^#\//,"").split("/"); // e.g. ["species","trex"]
+      if(seg[0] === "" || seg[0] === undefined){
+        activate("view-home");
+        return;
+      }
+      if(seg[0] === "species" && !seg[1]){
+        renderSpeciesList();
+        activate("view-species");
+        return;
+      }
+      if(seg[0] === "species" && seg[1]){
+        renderSpeciesDetail(seg[1]);
+        activate("view-detail");
+        return;
+      }
+      if(seg[0] === "timeline"){
+        activate("view-timeline");
+        return;
+      }
+      if(seg[0] === "gallery"){
+        activate("view-gallery");
+        return;
+      }
+      
+      // --- UPDATED MEMBER ROUTING ---
+      if(seg[0] === "members" && !seg[1]){
+        renderMemberList(); // Render list
+        activate("view-members");
+        return;
+      }
+      if(seg[0] === "members" && seg[1]){
+        renderMemberDetail(seg[1]); // Render detail
+        activate("view-member-detail");
+        return;
+      }
+      // --- END UPDATED ROUTING ---
+
+      // default
+      activate("view-home");
+    }
+
+    // -------- Init --------
+    window.addEventListener("hashchange", router);
+    window.addEventListener("DOMContentLoaded", () => {
+      // prepare initial renders
+      renderSpeciesList();
+      renderMemberList(); // <-- ADDED THIS
+      router();
+      
+      // quiz buttons (REMOVED)
+    });
+  </script>
+
+  <div id="main" hidden></div>
+</body>
+</html>
